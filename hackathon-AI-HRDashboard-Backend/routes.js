@@ -53,13 +53,13 @@ router.get('/QOLReport', async function (req, res) {
   console.log('test',result)
   test = JSON.parse(JSON.stringify(result[0]));
   console.log(test,"asidasdasdhioasdhioasdphio")
-  labas.SafetyIndex = test["Safety Index"];
-  labas.HealthCareIndex = test["Health Care Index"];
-  labas.CostOfLiving = test["Cost of Living Index"];
-  labas.PurchasingPowerIndex = test["Purchasing Power Index"];
-  labas.TrafficCommuteTimeIndex = test["Traffic Commute Time Index"];
-  labas.ClimateIndex = test["Climate Index"];
-  console.log(labas);
+  labas.SafetyIndex = parseInt(test["Safety Index"]/10);
+  labas.HealthCareIndex = parseInt(test["Health Care Index"]/10);
+  labas.CostOfLiving = parseInt(test["Cost of Living Index"]/10);
+  labas.PurchasingPowerIndex = parseInt(test["Purchasing Power Index"]/10);
+  labas.TrafficCommuteTimeIndex = parseInt(test["Traffic Commute Time Index"]/10);
+  labas.ClimateIndex = parseInt(test["Climate Index"]/10);
+  console.log(labas); 
   console.log(chalk.magentaBright('sending front end json object'));
   res.send(labas);
 });
