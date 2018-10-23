@@ -4,6 +4,7 @@ var chalk = require('chalk');
 var request = require('request');
 var mongoose = require('mongoose');
 var leaveDB = mongoose.model('Absenteeism', {}, 'Absenteeism');
+var QOLDB = mongoose.model('QualityOfLife', {}, 'QualityOfLife');
 var ntdmn = require('number-to-date-month-name');
 var count = require('count-array-values')
 router.use(function timeLog(req, res, next) {
@@ -46,10 +47,21 @@ router.get('/PerformanceReport', function (req, res) {
   console.log(chalk.magentaBright('sending front end json object'));
   res.send({ "called": "PeformanceReport" });
 });
-router.get('/QOLReport', function (req, res) {
-  console.log(chalk.green('Called QOLReport calling Azure endpoint .....'));
+router.get('/QOLReport', async function (req, res) {
+  var labas = {};
+  var result = await QOLDB.find({'Rank':1});
+  console.log('test',result)
+  test = JSON.parse(JSON.stringify(result[0]));
+  console.log(test,"asidasdasdhioasdhioasdphio")
+  labas.SafetyIndex = test["Safety Index"];
+  labas.HealthCareIndex = test["Health Care Index"];
+  labas.CostOfLiving = test["Cost of Living Index"];
+  labas.PurchasingPowerIndex = test["Purchasing Power Index"];
+  labas.TrafficCommuteTimeIndex = test["Traffic Commute Time Index"];
+  labas.ClimateIndex = test["Climate Index"];
+  console.log(labas);
   console.log(chalk.magentaBright('sending front end json object'));
-  res.send({ "called": "QOLReport" });
+  res.send(labas);
 });
 router.get('/SickLeaveAnalytics/DailySickLeavePrediction', function (req, res) {
   console.log(chalk.green('Called DailySickLeavePrediction calling Azure endpoint .....'));
