@@ -3,6 +3,8 @@ var app = express();
 var routes = require('./routes');
 var port = 8888;
 const bodyParser = require('body-parser'); 
+var mongodb = require('./mongodb');
+mongodb();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());    
 app.use(function (req, res, next) {
