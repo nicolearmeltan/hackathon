@@ -4,6 +4,8 @@ var chalk = require('chalk');
 var request = require('request');
 var mongoose = require('mongoose');
 var leaveDB = mongoose.model('Absenteeism', {}, 'Absenteeism');
+var ntdmn = require('number-to-date-month-name');
+var count = require('count-array-values')
 router.use(function timeLog(req, res, next) {
   console.log(chalk.green('Time: ', new Date()));
   next()
@@ -58,6 +60,7 @@ router.get('/SickLeaveAnalytics/AilmentsReport', async function (req, res) {
   console.log(chalk.green('Called AilmentsReport calling Azure endpoint .....'));
   let url = "https://ussouthcentral.services.azureml.net/workspaces/5d99b1e5dab04ea6a85f0a01e57d5481/services/ce4079d90f774b1f90d0482ab8130ffb/execute?api-version=2.0&format=swagger";
   let MonthlyAilmentReport = [];
+  let ranking = [];
   let token = "Bearer qWy40BmquZLGTWhnw0im03hA4vvbyOed0dLVgQWhAhj5eRC37l/8WE3QCtrs3Sau42vLg6DGdaxt620i6O+EOQ==";
   let data = {
     "Inputs": {
@@ -109,7 +112,8 @@ router.get('/SickLeaveAnalytics/AilmentsReport', async function (req, res) {
           } else {
             body = JSON.parse(body);
             let res = {}
-            res.Month = body["Results"]["output1"][0]["Month of absence"];
+            res.num = body["Results"]["output1"][0]["Month of absence"];
+            res.Month = ntdmn.toMonth(body["Results"]["output1"][0]["Month of absence"]);
             res.Ailment = body["Results"]["output1"][0]["Scored Labels"];
             resolved(res);
             console.log('After a call')
@@ -117,16 +121,22 @@ router.get('/SickLeaveAnalytics/AilmentsReport', async function (req, res) {
         });
       })
       await promiseRequest.then(function (promise) {
-        console.log('after all calls')
+        ranking.push(promise.Ailment);
+        console.log(ranking)
         MonthlyAilmentReport.push(promise);
         MonthlyAilmentReport.sort(function (a, b) {
-          return a.Month - b.Month
+          return a.num - b.num
         });
         console.log('should resolve')
         resolve(MonthlyAilmentReport);
       })
     }
-    res.send(MonthlyAilmentReport);
+    let test = count(ranking);
+    let sagot = {
+      ranking: test,
+      MonthlyAilmentReport:MonthlyAilmentReport
+    };
+    res.send(sagot);
   });
 });
 router.get('/SickLeaveAnalytics/WorkStressReport', function (req, res) {
