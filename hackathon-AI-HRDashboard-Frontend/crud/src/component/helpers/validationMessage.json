@@ -1,0 +1,11 @@
+{
+  "message": {
+    "required": "*required",
+    "length": "{0} must be atleast {1} characters.",
+    "letters": "{0} must only consist of letters only.",
+    "numbers": "{0} must only consist of numbers only.",
+    "email": "Please enter a valid Email.",
+    "password": "password should contain atleast 8-16 characters.",
+    "confirmpassword": "must be the same value with the password."
+  }
+}
